@@ -1,9 +1,11 @@
 package main
 
 import (
+	commonCommunication "github.com/kulycloud/common/communication"
 	"github.com/kulycloud/common/logging"
 	"github.com/kulycloud/route-processor/communication"
 	"github.com/kulycloud/route-processor/config"
+	"golang.org/x/net/context"
 )
 
 func main() {
@@ -16,12 +18,17 @@ func main() {
 	}
 	initLogger.Infow("Finished parsing config", "config", config.GlobalConfig)
 
-	comm := communication.NewCommunicator()
+	comm := commonCommunication.NewCommunicator()
 	go func() {
-		err := comm.Connect()
+		err := comm.Connect(config.GlobalConfig.ControlPlaneHost, config.GlobalConfig.ControlPlanePort)
 		if err != nil {
 			initLogger.Errorw("Could not connect to control-plane", "error", err)
 		}
+		err = comm.RegisterThisService(context.Background(), "route-processor", config.GlobalConfig.Host, config.GlobalConfig.Port)
+		if err != nil {
+			initLogger.Errorw("Could not register service", "error", err)
+		}
+		initLogger.Info("Registered to control-plane")
 	}()
 
 	initLogger.Info("Starting listener")

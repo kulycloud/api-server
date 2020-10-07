@@ -8,7 +8,7 @@ type Config struct {
 	Host string `configName:"host"`
 	Port uint32 `configName:"port"`
 	ControlPlaneHost string `configName:"controlPlaneHost"`
-	ControlPlanePort string `configName:"controlPlanePort"`
+	ControlPlanePort uint32 `configName:"controlPlanePort"`
 }
 
 var GlobalConfig = &Config{}
