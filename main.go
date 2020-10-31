@@ -34,6 +34,8 @@ func main() {
 	if err = listener.Serve(); err != nil {
 		logger.Panicw("error serving listener", "error", err)
 	}
+
+	listener.Storage.Ready()
 }
 
 func registerLoop() {

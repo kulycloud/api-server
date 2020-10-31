@@ -12,7 +12,9 @@ var _ protoRouteProcessor.RouteProcessorServer = &RouteProcessorHandler{}
 
 var logger = logging.GetForComponent("handler")
 
-type RouteProcessorHandler struct {}
+type RouteProcessorHandler struct {
+	protoRouteProcessor.UnimplementedRouteProcessorServer
+}
 
 func NewRouteProcessorHandler() *RouteProcessorHandler {
 	return &RouteProcessorHandler{}
