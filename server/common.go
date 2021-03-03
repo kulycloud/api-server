@@ -2,19 +2,26 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/gorilla/mux"
 	"net/http"
 )
+
+var ErrResourceNotFound = errors.New("resource not found")
+var ErrResourceExists = errors.New("resource already exists")
+var ErrInvalidName = errors.New("invalid name")
+
+const MarshallErrorString = `{"error": "could not marshall error description"}`
 
 func getNamespaceFromRequest(r *http.Request) string {
 	return mux.Vars(r)["namespace"]
 }
 
 func getNameFromRequest(r *http.Request) string {
-	return mux.Vars(r)["Name"]
+	return mux.Vars(r)["name"]
 }
 
-const MarshallErrorString = `{"error": "could not marshall error description"}`
+
 
 type ErrorResponse struct {
 	Text string `json:"error"`
