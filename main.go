@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/kulycloud/api-server/communication"
+	"github.com/kulycloud/api-server/config"
 	commonCommunication "github.com/kulycloud/common/communication"
 	"github.com/kulycloud/common/logging"
-	"github.com/kulycloud/route-processor/communication"
-	"github.com/kulycloud/route-processor/config"
 	"golang.org/x/net/context"
 	"time"
 )
@@ -57,7 +57,7 @@ func register() (*commonCommunication.ControlPlaneCommunicator, error) {
 		logger.Errorw("Could not connect to control-plane", "error", err)
 		return nil, err
 	}
-	err = comm.RegisterThisService(context.Background(), "route-processor", config.GlobalConfig.Host, config.GlobalConfig.Port)
+	err = comm.RegisterThisService(context.Background(), "api-server", config.GlobalConfig.Host, config.GlobalConfig.Port)
 	if err != nil {
 		logger.Errorw("Could not register service", "error", err)
 		return nil, err

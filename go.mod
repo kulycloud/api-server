@@ -1,4 +1,4 @@
-module github.com/kulycloud/route-processor
+module github.com/kulycloud/api-server
 
 go 1.15
 

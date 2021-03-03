@@ -1,31 +1,24 @@
 package communication
 
 import (
-	"context"
 	commonCommunication "github.com/kulycloud/common/communication"
 	"github.com/kulycloud/common/logging"
-	protoRouteProcessor "github.com/kulycloud/protocol/route-processor"
+	protoApiServer "github.com/kulycloud/protocol/api-server"
 )
 
 
-var _ protoRouteProcessor.RouteProcessorServer = &RouteProcessorHandler{}
+var _ protoApiServer.ApiServerServer = &ApiServerHandler{}
 
 var logger = logging.GetForComponent("handler")
 
-type RouteProcessorHandler struct {
-	protoRouteProcessor.UnimplementedRouteProcessorServer
+type ApiServerHandler struct {
+	protoApiServer.UnimplementedApiServerServer
 }
 
-func NewRouteProcessorHandler() *RouteProcessorHandler {
-	return &RouteProcessorHandler{}
+func NewRouteProcessorHandler() *ApiServerHandler {
+	return &ApiServerHandler{}
 }
 
-func (handler *RouteProcessorHandler) Register(listener *commonCommunication.Listener) {
-	protoRouteProcessor.RegisterRouteProcessorServer(listener.Server, handler)
+func (handler *ApiServerHandler) Register(listener *commonCommunication.Listener) {
+	protoApiServer.RegisterApiServerServer(listener.Server, handler)
 }
-
-func (handler *RouteProcessorHandler) ProcessRoute(ctx context.Context, request *protoRouteProcessor.RouteProcessorRequest) (*protoRouteProcessor.RouteProcessorResponse, error) {
-	logger.Infow("processing route", "route", request.Data)
-	return &protoRouteProcessor.RouteProcessorResponse{Status: protoRouteProcessor.RouteProcessorStatus_OK}, nil
-}
-
