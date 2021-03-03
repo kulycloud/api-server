@@ -21,8 +21,6 @@ func getNameFromRequest(r *http.Request) string {
 	return mux.Vars(r)["name"]
 }
 
-
-
 type ErrorResponse struct {
 	Text string `json:"error"`
 }
@@ -42,4 +40,8 @@ func writeError(w http.ResponseWriter, code int, err error) {
 
 	w.WriteHeader(code)
 	_, _ = w.Write(marshalled)
+}
+
+func isNameValid(name string) bool {
+	return len(name) != 0
 }

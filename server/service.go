@@ -87,7 +87,7 @@ func (srv *Server) serviceCreateUpdate(isCreate bool)  func(w http.ResponseWrite
 		namespace := getNamespaceFromRequest(r)
 		name := getNameFromRequest(r)
 
-		if len(name) == 0 {
+		if !isNameValid(name) {
 			writeError(w, http.StatusBadRequest, ErrInvalidName)
 			return
 		}

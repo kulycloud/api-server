@@ -1,0 +1,42 @@
+host: myapp.kuly.cloud
+start: entry
+steps:
+  entry:
+    service: core:router
+    config:
+      routes:
+      - method: get
+        pathPrefix: /api
+        destination: internalApi
+      - method: post
+        pathPrefix: /api
+        destination: internalApiLogin
+    references:
+      self: entry
+      internalApi: api
+      internalApiLogin: apiLogin
+
+  api:
+    service: u01:superCoolApi
+    config:
+      maxRequestTime: 10s
+
+  apiAuthenticated:
+    service: u01:superCoolApi
+    config:
+      maxRequestTime: 25s
+
+  apiLogin:
+    service: platform:authentication
+    config:
+      provider: kuly
+      requiredRole: ADMIN
+    references:
+      success: apiAuthenticated
+      error: authError
+
+  authError:
+    service: core:message
+    config:
+      message: |
+        Error during authentication!

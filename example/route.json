@@ -1,0 +1,57 @@
+{
+  "host": "myapp.kuly.cloud",
+  "start": "entry",
+  "steps": {
+    "api": {
+      "config": {
+        "maxRequestTime": "10s"
+      },
+      "service": "u01:superCoolApi"
+    },
+    "apiAuthenticated": {
+      "config": {
+        "maxRequestTime": "25s"
+      },
+      "service": "u01:superCoolApi"
+    },
+    "apiLogin": {
+      "config": {
+        "provider": "kuly",
+        "requiredRole": "ADMIN"
+      },
+      "references": {
+        "error": "authError",
+        "success": "apiAuthenticated"
+      },
+      "service": "platform:authentication"
+    },
+    "authError": {
+      "config": {
+        "message": "Error during authentication!\n"
+      },
+      "service": "core:message"
+    },
+    "entry": {
+      "config": {
+        "routes": [
+          {
+            "destination": "internalApi",
+            "method": "get",
+            "pathPrefix": "/api"
+          },
+          {
+            "destination": "internalApiLogin",
+            "method": "post",
+            "pathPrefix": "/api"
+          }
+        ]
+      },
+      "references": {
+        "internalApi": "api",
+        "internalApiLogin": "apiLogin",
+        "self": "entry"
+      },
+      "service": "core:router"
+    }
+  }
+}
