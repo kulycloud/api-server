@@ -15,7 +15,7 @@ type ApiServerHandler struct {
 	protoApiServer.UnimplementedApiServerServer
 }
 
-func NewRouteProcessorHandler() *ApiServerHandler {
+func NewApiServerHandler() *ApiServerHandler {
 	return &ApiServerHandler{}
 }
 

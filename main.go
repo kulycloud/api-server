@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/kulycloud/api-server/communication"
 	"github.com/kulycloud/api-server/config"
+	"github.com/kulycloud/api-server/server"
 	commonCommunication "github.com/kulycloud/common/communication"
 	"github.com/kulycloud/common/logging"
 	"golang.org/x/net/context"
@@ -28,14 +29,21 @@ func main() {
 		logger.Panicw("error initializing listener", "error", err)
 	}
 
-	handler := communication.NewRouteProcessorHandler()
+	go httpListener(listener.Storage)
+
+	handler := communication.NewApiServerHandler()
 	handler.Register(listener)
 
 	if err = listener.Serve(); err != nil {
 		logger.Panicw("error serving listener", "error", err)
 	}
+}
 
-	listener.Storage.Ready()
+func httpListener(storage *commonCommunication.StorageCommunicator) {
+	srv := server.NewServer(storage)
+	if err := srv.Start(); err != nil {
+		logger.Panicw("error serving http", "error", err)
+	}
 }
 
 func registerLoop() {

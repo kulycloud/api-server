@@ -9,6 +9,7 @@ type Config struct {
 	Port uint32 `configName:"port"`
 	ControlPlaneHost string `configName:"controlPlaneHost"`
 	ControlPlanePort uint32 `configName:"controlPlanePort"`
+	HTTPPort uint32 `configName:"httpPort"`
 }
 
 var GlobalConfig = &Config{}
