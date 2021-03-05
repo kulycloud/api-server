@@ -1,0 +1,7 @@
+apiVersion: v2
+name: api-server
+description: Kuly api server
+
+type: application
+version: 0.1.0
+appVersion: "0.1.0-indev"
