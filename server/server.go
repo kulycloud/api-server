@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/kulycloud/api-server/config"
@@ -11,6 +12,8 @@ import (
 )
 
 var logger = logging.GetForComponent("server")
+
+var ErrStorageNotReady = errors.New("storage is not ready")
 
 type Server struct {
 	router *mux.Router
@@ -41,8 +44,7 @@ func (srv *Server) Start() error {
 func (srv *Server) storageAvailabilityMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !srv.storage.Ready() {
-			w.WriteHeader(500)
-			_, _ = w.Write([]byte("storage is not ready"))
+			writeError(w, http.StatusInternalServerError, ErrStorageNotReady)
 			return
 		}
 
