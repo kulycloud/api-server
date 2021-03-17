@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/kulycloud/api-server/communication"
 	"github.com/kulycloud/api-server/config"
+	"github.com/kulycloud/api-server/server"
 	"github.com/kulycloud/common/logging"
 )
 
@@ -17,5 +18,19 @@ func main() {
 	}
 	logger.Infow("Finished parsing config", "config", config.GlobalConfig)
 
-	communication.RegisterToControlPlane()
+	serveErrs := communication.RegisterToControlPlane()
+
+	go startHTTPServer()
+
+	err = <-serveErrs
+	if err != nil {
+		logger.Panicw("error serving listener", "error", err)
+	}
+}
+
+func startHTTPServer() {
+	srv := server.NewServer(communication.ControlPlane.Storage)
+	if err := srv.Start(); err != nil {
+		logger.Panicw("error serving http", "error", err)
+	}
 }
