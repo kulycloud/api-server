@@ -3,7 +3,10 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/kulycloud/api-server/communication"
+	commonCommunication "github.com/kulycloud/common/communication"
 	"net/http"
 )
 
@@ -12,6 +15,9 @@ var ErrResourceExists = errors.New("resource already exists")
 var ErrInvalidName = errors.New("invalid name")
 
 const MarshallErrorString = `{"error": "could not marshall error description"}`
+
+const ResourceTypeService = "service"
+const ResourceTypeRoute = "route"
 
 func getNamespaceFromRequest(r *http.Request) string {
 	return mux.Vars(r)["namespace"]
@@ -44,4 +50,18 @@ func writeError(w http.ResponseWriter, code int, err error) {
 
 func isNameValid(name string) bool {
 	return len(name) != 0
+}
+
+func dispatchEvent(resourceType, namespace, name string) error {
+	evt := commonCommunication.NewConfigurationChanged(commonCommunication.NewResource(
+		resourceType,
+		name,
+		namespace,
+	))
+
+	err := communication.ControlPlane.CreateEvent(evt)
+	if err != nil {
+		return fmt.Errorf("could not dispatch event: %w", err)
+	}
+	return nil
 }
