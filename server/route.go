@@ -142,6 +142,12 @@ func (srv *Server) routeCreateUpdate(isCreate bool)  func(w http.ResponseWriter,
 			return
 		}
 
+		err = dispatchEvent(ResourceTypeRoute, getNamespaceFromRequest(r), getNameFromRequest(r))
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, err)
+			return
+		}
+
 		conv, err := mapping.MapRoute(route)
 		if err != nil {
 			writeError(w, http.StatusInternalServerError, err)
@@ -174,6 +180,12 @@ func (srv *Server) deleteRoute(w http.ResponseWriter, r *http.Request) {
 	logger.Infow("Deleting route", "name", getNameFromRequest(r), "namespace", getNamespaceFromRequest(r))
 
 	err = srv.storage.DeleteRoute(ctx, namespace, name)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	err = dispatchEvent(ResourceTypeRoute, getNamespaceFromRequest(r), getNameFromRequest(r))
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err)
 		return

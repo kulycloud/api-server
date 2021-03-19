@@ -124,6 +124,12 @@ func (srv *Server) serviceCreateUpdate(isCreate bool)  func(w http.ResponseWrite
 			return
 		}
 
+		err = dispatchEvent(ResourceTypeService, getNamespaceFromRequest(r), getNameFromRequest(r))
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, err)
+			return
+		}
+
 		marshalled, err := json.Marshal(service)
 		if err != nil {
 			writeError(w, http.StatusInternalServerError, err)
@@ -150,6 +156,12 @@ func (srv *Server) deleteService(w http.ResponseWriter, r *http.Request) {
 	logger.Infow("Deleting service", "name", getNameFromRequest(r), "namespace", getNamespaceFromRequest(r))
 
 	err = srv.storage.DeleteService(ctx, namespace, name)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	err = dispatchEvent(ResourceTypeService, getNamespaceFromRequest(r), getNameFromRequest(r))
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err)
 		return
