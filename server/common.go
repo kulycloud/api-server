@@ -55,8 +55,8 @@ func isNameValid(name string) bool {
 func dispatchEvent(resourceType, namespace, name string) error {
 	evt := commonCommunication.NewConfigurationChanged(commonCommunication.NewResource(
 		resourceType,
-		name,
 		namespace,
+		name,
 	))
 
 	err := communication.ControlPlane.CreateEvent(evt)
